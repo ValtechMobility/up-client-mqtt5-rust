@@ -51,29 +51,27 @@ async fn main() -> Result<(), UStatus> {
     .finalize();
 
     let config = MqttConfig {
-        mqtt_protocol: "mqtt".to_string(),
+        mqtt_protocol: "mqtts".to_string(),
         mqtt_hostname: env::var("MQTT_HOSTNAME").expect("MQTT_HOSTNAME env variable not found").to_string(),
-        mqtt_port:  env::var("MQTT_PORT").expect("MQTT_PORT env variable not found").to_string(),
+        mqtt_port: env::var("MQTT_PORT").expect("MQTT_PORT env variable not found").to_string(),
         max_buffered_messages: 100,
         max_subscriptions: 100,
         session_expiry_interval: 3600,
-        ssl_options: ssl_options,
+        ssl_options,
         username: env::var("CLIENT_NAME").expect("CLIENT_NAME env variable not found").to_string(),
     };
 
     let client = UPClientMqtt::new(
         config,
         UUID::build(),
-        "Vehicle_A".to_string(),
+        "Vehicle_B".to_string(),
         UPClientMqttType::Device,
     )
     .await?;
 
     let listener = Arc::new(PrintlnListener {});
-    let source_filter = UUri::from_str(&format!(
-        "//Vehicle_B/{WILDCARD_ENTITY_ID:X}/{WILDCARD_ENTITY_VERSION:X}/{WILDCARD_RESOURCE_ID:X}"
-    ))
-    .expect("Failed to create source filter");
+    let source_filter =
+        UUri::from_str("//Vehicle_B/A8000/2/8A50").expect("Failed to create source filter");
 
     println!("Subscribing to: {}", source_filter.to_uri(false));
 
