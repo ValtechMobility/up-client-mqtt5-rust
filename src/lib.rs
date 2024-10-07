@@ -171,7 +171,7 @@ impl MockableMqttClient for AsyncMqttClient {
     async fn subscribe(&self, topic: &str, id: i32) -> Result<(), UStatus> {
         // QOS 1 - Delivered and received at least once
         self.inner_mqtt_client
-            .subscribe_with_options(topic, QOS_1, None, sub_id(id))
+            .subscribe_with_options(topic, QOS_1, None, None) // todo: 4th argument depends on mqtt version!
             .await
             .map_err(|e| {
                 UStatus::fail_with_code(
